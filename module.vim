@@ -18,3 +18,4 @@ au FileType javascript     command! -buffer Beautify call vice#beautify#JsBeauti
 au FileType css            command! -buffer Beautify call vice#beautify#CssBeautify()
 au FileType xml,xhtml,html command! -buffer Beautify call vice#beautify#HtmlBeautify()
 au FileType json           command! -buffer Beautify call vice#beautify#JsonBeautify()
+au FileType c,cpp,java     command! -buffer Beautify call vice#beautify#AstyleBeautify()
