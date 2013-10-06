@@ -55,3 +55,14 @@ func! vice#beautify#JsonBeautify()
         \   console.log(JSON.stringify(JSON.parse(data), null, 2));
         \ })"
 endf
+
+func! vice#beautify#AstyleBeautify()
+    if executable('astyle')
+        let temp_file = tempname()
+        exe 'w '.temp_file
+        silent exe '!astyle -k1 -p -F -C -N -Y -U -H -xe -xy -q --indent=spaces -c --style=kr '.temp_file
+        silent redraw!
+        normal G$dgg
+        exe '0r '.temp_file
+    endif
+endf
