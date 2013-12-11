@@ -17,8 +17,10 @@ func! s:Initialize()
 endf
 
 func! vice#beautify#HtmlBeautify()
-    call s:Initialize()
-    call HtmlBeautify()
+    if executable('tidy')
+        silent! exe '%!tidy -q -i --show-body-only true -wrap 0 --preserve-entities true --show-warnings false --fix-uri false --char-encoding utf8 --input-encoding utf8 --output-encoding utf8 --ascii-chars true --fix-uri false --quote-ampersand false'
+        redraw!
+    endif
 endf
 
 func! vice#beautify#JsBeautify()
@@ -34,7 +36,6 @@ func! vice#beautify#CssBeautify()
 endf
 
 func! vice#beautify#JsonBeautify()
-    call s:Initialize()
     if executable('uglifyjs2')
         normal gg
         normal iv=
