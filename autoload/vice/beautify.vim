@@ -78,13 +78,9 @@ func! vice#beautify#Python()
         exe '!pip install autopep8 docformatter'
     endif
 
-    let temp_file = tempname()
-    exe 'w '.temp_file
-    silent exe '!autopep8 --in-place --aggressive --aggressive '.temp_file
-    silent exe '!docformatter --in-place --no-blank --pre-summary-newline '.temp_file
+    silent exe '%!autopep8 --aggressive --aggressive -'
+    silent exe '%!docformatter --no-blank --pre-summary-newline -'
     silent redraw!
-    normal G$dgg
-    exe '0r '.temp_file
 endf
 
 func! vice#beautify#Go()
