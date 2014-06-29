@@ -3,6 +3,10 @@
 Adds filetype specific `:Beautify` command which beautifies the current buffer.
 
 ## Supported filetypes
-- Javascript, JSON
+- JavaScript, JSON
+- HTML, XML
 - CSS
-- XML, XHTML, HTML
+- C, C++
+- Java
+- Go
+- Python
