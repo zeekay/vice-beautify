@@ -75,7 +75,8 @@ endf
 
 func! vice#beautify#Python()
     if !executable('autopep8')
-        exe '!pip install autopep8 docformatter'
+        exe '!pip install autopep8'
+        exe '!pip install -e "git+https://github.com/zeekay/docformatter#egg=docformatter"'
     endif
 
     silent exe '%!autopep8 --aggressive --aggressive -'
