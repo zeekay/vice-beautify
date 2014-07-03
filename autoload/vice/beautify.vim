@@ -17,8 +17,30 @@ func! s:Initialize()
 endf
 
 func! vice#beautify#HTML()
+    if !executable('tidy')
+        echoerr 'Please install html-tidy: https://github.com/w3c/tidy-html5'
+    endif
+
+    let args = [
+        \ '-wrap 0',
+        \ '--preserve-entities true',
+        \ '--show-warnings false',
+        \ '--fix-uri false',
+        \ '--char-encoding utf8',
+        \ '--input-encoding utf8',
+        \ '--output-encoding utf8',
+        \ '--ascii-chars true',
+        \ '--fix-uri false',
+        \ '--quote-ampersand false',
+        \ '--vertical-space no',
+        \ '--hide-comments false',
+        \ '--doctype auto',
+        \ '--show-body-only auto',
+        \ '--tidy-mark false',
+    \ ]
+
     if executable('tidy')
-        silent! exe '%!tidy -q -i --show-body-only true -wrap 0 --preserve-entities true --show-warnings false --fix-uri false --char-encoding utf8 --input-encoding utf8 --output-encoding utf8 --ascii-chars true --fix-uri false --quote-ampersand false'
+        silent! exe '%!tidy -q -i '.join(args, ' ')
         redraw!
     endif
 endf
