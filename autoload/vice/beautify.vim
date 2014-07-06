@@ -35,9 +35,14 @@ func! vice#beautify#HTML()
         \ '--vertical-space no',
         \ '--hide-comments false',
         \ '--doctype auto',
-        \ '--show-body-only auto',
         \ '--tidy-mark false',
     \ ]
+
+    " Simple heuristic to decide whether to show body or not. There is a
+    " show-body-only auto setting, but it doesn't work very well.
+    if match(getline(1,10), '<html') == -1
+        call add(args, '--show-body-only true')
+    endif
 
     if executable('tidy')
         silent! exe '%!tidy -q -i '.join(args, ' ')
@@ -98,7 +103,7 @@ endf
 func! vice#beautify#Python()
     if !executable('autopep8')
         exe '!pip install autopep8'
-        exe '!pip install -e "git+https://github.com/zeekay/docformatter#egg=docformatter"'
+        exe '!pip install docformatter'
     endif
 
     silent exe '%!autopep8 --aggressive --aggressive -'
