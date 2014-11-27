@@ -1,22 +1,12 @@
-let s:initialized = 0
-
-func! s:Initialize()
-    if s:initialized == 1
-        return
-    endif
-
-    let s:initialized = 1
-    call vice#Extend({
-        \ 'ft_addons': {
-            \ 'javascript\|css\|html\|xhtml\|xml': [
-                \ 'github:zeekay/vim-jsbeautify',
-                \ 'github:zeekay/js-beautify',
-            \ ]
-        \ }
-    \ })
+func! vice#beautify#stdin_to_file(cmd, temp_file)
+    exe 'w '.temp_file
+    silent exe cmd
+    silent redraw!
+    normal G$dgg
+    exe '0r '.temp_file
 endf
 
-func! vice#beautify#HTML()
+func! vice#beautify#HTMLTidy()
     if !executable('tidy')
         echoerr 'Please install html-tidy: https://github.com/w3c/tidy-html5'
     endif
@@ -51,15 +41,27 @@ func! vice#beautify#HTML()
 endf
 
 func! vice#beautify#JavaScript()
-    call s:Initialize()
-    call JsBeautify()
+    if !executable('js-beautify')
+        echoerr 'Please install js-beautify (github.com/beautify-web/js-beautify): pip install jsbeautifier'
+    endif
+
+    exe '%!js-beautify -k -x --brace-style=collapse --indent-size='.&shiftwidth.' -i'
 endf
 
 func! vice#beautify#CSS()
-    call s:Initialize()
-    " Remove all leading indentation first, since js-beautify doesn't
-    exe '%le'
-    call CSSBeautify()
+    if !executable('css-beautify')
+        echoerr 'Please install js-beautify (github.com/beautify-web/js-beautify), which provides css-beautify: pip install jsbeautifier'
+    endif
+
+    exe '%!css-beautify --indent-size='.&shiftwidth.'-f -'
+endf
+
+func! vice#beautify#HTML()
+    if !executable('html-beautify')
+        echoerr 'Please install js-beautify (github.com/beautify-web/js-beautify), which provides html-beautify: pip install jsbeautifier'
+    endif
+
+    exe '%!html-beautify -f -'
 endf
 
 func! vice#beautify#JSON()
@@ -77,15 +79,12 @@ endf
 
 func! vice#beautify#Astyle()
     if !executable('astyle')
-        echoerr 'astyle must be installed to beautify'
+        echoerr 'astyle must be installed to beautify: http://astyle.sourceforge.net'
     endif
 
     let temp_file = tempname()
-    exe 'w '.temp_file
-    silent exe '!astyle -k1 -p -F -C -N -Y -U -H -xe -xy -q --indent=spaces -c --style=kr '.temp_file
-    silent redraw!
-    normal G$dgg
-    exe '0r '.temp_file
+    let cmd = '!astyle -k1 -p -F -C -N -Y -U -H -xe -xy -q --indent=spaces -c --style=kr '.temp_file
+    vice#beautify#process_buffer(cmd, temp_file)
 endf
 
 func! vice#beautify#Python()
