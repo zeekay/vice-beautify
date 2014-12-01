@@ -1,14 +1,15 @@
 func! vice#beautify#stdin_to_file(cmd, temp_file)
-    exe 'w '.temp_file
-    silent exe cmd
+    exe 'w '.a:temp_file
+    silent exe a:cmd
     silent redraw!
     normal G$dgg
-    exe '0r '.temp_file
+    exe '0r '.a:temp_file
 endf
 
 func! vice#beautify#HTMLTidy()
     if !executable('tidy')
         echoerr 'Please install html-tidy: https://github.com/w3c/tidy-html5'
+        return
     endif
 
     let args = [
@@ -43,6 +44,7 @@ endf
 func! vice#beautify#JavaScript()
     if !executable('js-beautify')
         echoerr 'Please install js-beautify (github.com/beautify-web/js-beautify): pip install jsbeautifier'
+        return
     endif
 
     exe '%!js-beautify -k -x --brace-style=collapse --indent-size='.&shiftwidth.' -i'
@@ -51,6 +53,7 @@ endf
 func! vice#beautify#CSS()
     if !executable('css-beautify')
         echoerr 'Please install js-beautify (github.com/beautify-web/js-beautify), which provides css-beautify: pip install jsbeautifier'
+        return
     endif
 
     exe '%!css-beautify --indent-size='.&shiftwidth.'-f -'
@@ -59,6 +62,7 @@ endf
 func! vice#beautify#HTML()
     if !executable('html-beautify')
         echoerr 'Please install js-beautify (github.com/beautify-web/js-beautify), which provides html-beautify: pip install jsbeautifier'
+        return
     endif
 
     exe '%!html-beautify -f -'
@@ -79,18 +83,26 @@ endf
 
 func! vice#beautify#Astyle()
     if !executable('astyle')
-        echoerr 'astyle must be installed to beautify: http://astyle.sourceforge.net'
+        if has('mac') && executable('brew')
+            exe '!brew install astyle'
+        else
+            echoerr 'astyle must be installed to beautify: http://astyle.sourceforge.net'
+            return
+        endif
     endif
 
     let temp_file = tempname()
     let cmd = '!astyle -k1 -p -F -C -N -Y -U -H -xe -xy -q --indent=spaces -c --style=kr '.temp_file
-    vice#beautify#process_buffer(cmd, temp_file)
+    call vice#beautify#stdin_to_file(cmd, temp_file)
 endf
 
 func! vice#beautify#Python()
-    if !executable('autopep8')
+    if !executable('autopep8') || !executable('docformatter') && executable('pip')
         exe '!pip install autopep8'
         exe '!pip install docformatter'
+    else
+        echoerr 'autopep8 and docformatter must be installed to use vice#beautify#Python'
+        return
     endif
 
     silent exe '%!autopep8 --aggressive --aggressive -'
@@ -101,6 +113,7 @@ endf
 func! vice#beautify#Go()
     if !executable('gofmt')
         echerr 'Unable to beautify, please install gofmt!'
+        return
     endif
 
     let view = winsaveview()
