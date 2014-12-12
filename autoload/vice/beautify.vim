@@ -35,10 +35,8 @@ func! vice#beautify#HTMLTidy()
         call add(args, '--show-body-only true')
     endif
 
-    if executable('tidy')
-        silent! exe '%!tidy -q -i '.join(args, ' ')
-        redraw!
-    endif
+    silent! exe '%!tidy -q -i '.join(args, ' ')
+    redraw!
 endf
 
 func! vice#beautify#JavaScript()
@@ -97,12 +95,14 @@ func! vice#beautify#Astyle()
 endf
 
 func! vice#beautify#Python()
-    if (!executable('autopep8') || !executable('docformatter')) && executable('pip')
-        exe '!pip install autopep8'
-        exe '!pip install docformatter'
-    else
-        echoerr 'autopep8 and docformatter must be installed to use vice#beautify#Python'
-        return
+    if !executable('autopep8') || !executable('docformatter')
+        if executable('pip')
+            exe '!pip install autopep8'
+            exe '!pip install docformatter'
+        else
+            echoerr 'autopep8 and docformatter must be installed to use vice#beautify#Python'
+            return
+        endif
     endif
 
     silent exe '%!autopep8 --aggressive --aggressive -'
