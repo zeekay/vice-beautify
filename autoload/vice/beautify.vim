@@ -97,7 +97,7 @@ func! vice#beautify#Astyle()
 endf
 
 func! vice#beautify#Python()
-    if !executable('autopep8') || !executable('docformatter') && executable('pip')
+    if (!executable('autopep8') || !executable('docformatter')) && executable('pip')
         exe '!pip install autopep8'
         exe '!pip install docformatter'
     else
