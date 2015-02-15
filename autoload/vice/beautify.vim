@@ -50,11 +50,11 @@ endf
 
 func! vice#beautify#CSS()
     if !executable('css-beautify')
-        echoerr 'Please install js-beautify (github.com/beautify-web/js-beautify), which provides css-beautify: pip install jsbeautifier'
+        echoerr 'Please install js-beautify (github.com/beautify-web/js-beautify), which provides css-beautify: npm install -g js-beautify'
         return
     endif
 
-    exe '%!css-beautify --indent-size='.&shiftwidth.'-f -'
+    exe '%!css-beautify --indent-size='.&shiftwidth.' -f -'
 endf
 
 func! vice#beautify#HTML()
