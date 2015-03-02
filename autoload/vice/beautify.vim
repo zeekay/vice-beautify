@@ -67,16 +67,20 @@ func! vice#beautify#HTML()
 endf
 
 func! vice#beautify#JSON()
-    if executable('uglifyjs2')
-        normal gg
-        normal iv=
-        silent %!uglifyjs2 -b indent-level=2,quote-keys=true
-        normal 4x
-        normal Gdd$x
-        normal gg
-    else
-        silent %!python -m json.tool
-    endif
+    call vice#beautify#PythonJSON()
+endf
+
+func! vice#beautify#PythonJSON()
+    silent %!python -m json.tool
+endf
+
+func! vice#beautify#UglifyJS2()
+    normal gg
+    normal iv=
+    silent %!uglifyjs2 -b indent-level=2,quote-keys=true
+    normal 4x
+    normal Gdd$x
+    normal gg
 endf
 
 func! vice#beautify#Astyle()
